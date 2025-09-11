@@ -1,0 +1,25 @@
+<div class="container my-4">
+  <h2 class="mb-4">Productos</h2>
+
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <div class="row" *ngIf="!loading && products.length > 0">
+    <div class="col-md-4 mb-4" *ngFor="let product of products">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text text-muted">{{ product.shortDescription }}</p>
+          <p class="fw-bold">{{ product.price | currency:product.currency }}</p>
+          <button class="btn btn-primary btn-sm">Agregar al carrito</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && products.length === 0" class="alert alert-info">
+    No hay productos disponibles.
+  </div>
+</div>
+
