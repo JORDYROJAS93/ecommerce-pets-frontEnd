@@ -1,25 +1,41 @@
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
-import { Router, RouterModule } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
-import { navbarComponent } from "../navbar/navbar";
+import { count } from 'rxjs';
 
 @Component({
   selector: 'app-header',
-  imports: [navbarComponent, RouterModule],
+  imports: [RouterLink,RouterLinkActive], 
   templateUrl: './header.html',
-  styleUrl: './header.css'
+  styleUrls: ['./header.css'],
+  standalone: true
 })
-export class headerComponent implements OnInit  {
+export class HeaderComponent implements OnInit {
 
-cartCount: number = 0;
+  cartCount: number = 0;
+  isAuthenticated = false;
+  username: string | null = null;
 
-  constructor(private cartService: CartService) {}
+  constructor(
+    public authService: AuthService,
+    private cartService: CartService
+  ) {}
 
   ngOnInit(): void {
-    this.cartService.getCartItems().subscribe(items => {
-      this.cartCount = items.length;
+    // Suscribirse al estado de autenticación
+    this.authService.isAuthenticated().subscribe(isAuth => {
+      this.isAuthenticated = isAuth;
+      this.username = isAuth ? this.authService.getUsername() : null;
     });
+
+    // Obtener conteo del carrito
+    this.cartService.getCartCount().subscribe((count: number) => {
+  this.cartCount = count;
+});
   }
 
+  logout(): void {
+    this.authService.logout();
+  }
 }

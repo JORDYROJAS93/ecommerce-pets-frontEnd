@@ -3,19 +3,24 @@ import { ProductService  } from '../../../core/services/product.service';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Product } from '../../../core/models/product.model';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+
 
 @Component({
   selector: 'app-product-list',
   imports: [CommonModule,CurrencyPipe, RouterModule],
   templateUrl: './product-list.html',
-  styleUrl: './product-list.css'
+  styleUrl: './product-list.css',
+  standalone: true
 })
 export class ProductListComponent {
 
   products: Product[] = [];
   loading = true;
 
-  constructor(private productService: ProductService) {}
+  constructor(
+    public authService: AuthService,
+    private productService: ProductService) {}
 
   ngOnInit(): void {
     this.productService.getProducts().subscribe({

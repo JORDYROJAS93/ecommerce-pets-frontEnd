@@ -1,0 +1,17 @@
+/* Estilo para los enlaces del menú */
+.navbar-nav .nav-link {
+  cursor: pointer !important; /* 👈 Forzamos el cursor de mano */
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+  text-decoration: none; /* Para evitar subrayado inicial */
+}
+
+.navbar-nav .nav-link:hover {
+  color: #0056b3 !important;
+  text-decoration: underline !important;
+}
+
+/* Para asegurar que no haya elementos superpuestos */
+.navbar-nav .nav-link {
+  position: relative;
+  z-index: 1;
+}
