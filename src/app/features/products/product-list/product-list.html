@@ -1,8 +1,9 @@
 <div class="container my-4">
   <h2 class="mb-4">Productos</h2>
 
+  <!-- Solo administradores ven el botón de crear -->
   @if (authService.isAdmin()) {
-    <a routerLink="/products/new" class="btn btn-success">Agregar Nuevo Producto</a>
+    <a routerLink="/products/new" class="btn btn-success mb-4">Nuevo Producto</a>
   }
 
   @if (loading) {
@@ -20,7 +21,25 @@
               <h5 class="card-title">{{ product.name }}</h5>
               <p class="card-text text-muted">{{ product.shortDescription }}</p>
               <p class="fw-bold">{{ product.price | currency:product.currency }}</p>
-              <button class="btn btn-primary btn-sm">Agregar al carrito</button>
+
+              <!-- 👇 BOTÓN "VER DETALLES" → SIEMPRE visible -->
+              <a routerLink="/products/detail/{{product.id}}" class="btn btn-sm btn-info me-2">
+                <i class="bi bi-eye"></i> Ver
+              </a>
+
+              <!-- 👇 BOTÓN "AGREGAR AL CARRITO" → SOLO para CLIENTES -->
+              @if (authService.isUser()) {
+                <button class="btn btn-sm btn-primary me-2" (click)="addToCart(product)">
+                  <i class="bi bi-cart-plus"></i> Agregar al carrito
+                </button>
+              }
+
+              <!-- 👇 BOTÓN "EDITAR" → SOLO para ADMINISTRADORES -->
+              @if (authService.isAdmin()) {
+                <a routerLink="/products/edit/{{product.id}}" class="btn btn-sm btn-warning">
+                  <i class="bi bi-pencil"></i> Editar
+                </a>
+              }
             </div>
           </div>
         </div>

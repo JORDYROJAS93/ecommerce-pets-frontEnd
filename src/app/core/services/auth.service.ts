@@ -96,7 +96,15 @@ hasRole(role: string): boolean {
 }
 
 isAdmin(): boolean {
-  return this.hasRole('ROLE_ADMIN');
+  const decodedToken = this.getDecodedToken();
+  if (!decodedToken || !Array.isArray(decodedToken.roles)) return false;
+  return decodedToken.roles.includes('ROLE_ROLE_ADMIN'); 
+}
+
+isUser(): boolean {
+  const decodedToken = this.getDecodedToken();
+  if (!decodedToken || !Array.isArray(decodedToken.roles)) return false;
+  return decodedToken.roles.includes('ROLE_ROLE_USER'); // 👈 ¡IMPORTANTE!
 }
 
 }

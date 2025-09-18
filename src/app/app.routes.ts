@@ -8,12 +8,20 @@ import { CartComponent } from './features/cart/cart';
 import { CheckoutComponent } from './features/checkout/checkout';
 import { ProfileComponent } from './features/profile/profile';
 import { AdminGuard } from './core/guards/admin.guard';
+import { ProductFormComponent } from './features/products/product-form/product-form';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'products', component: ProductListComponent },
-    { path: 'products/:id', component: ProductDetailComponent },
-    { path: 'products/new', component: ProductListComponent, canActivate: [AdminGuard] },
+
+    // RUTAS ESPECÍFICAS (primero)
+  { path: 'products/new', component: ProductFormComponent, canActivate: [AdminGuard] },
+  { path: 'products/edit/:id', component: ProductFormComponent, canActivate: [AdminGuard] },
+
+  // LUEGO LAS RUTAS CON PARÁMETROS
+  { path: 'products/detail/:id', component: ProductDetailComponent },
+  { path: 'products', component: ProductListComponent },
+
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'cart', component: CartComponent, canActivate: [AdminGuard] },

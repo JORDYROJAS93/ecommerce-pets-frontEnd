@@ -14,8 +14,11 @@ import { ProductService } from '../../../core/services/product.service';
   standalone: true
 })
 export class ProductFormComponent implements OnInit {
-  @Input() producto: Product | null = null;
+  
+  
   productForm: FormGroup;
+  producto: Product | null = null;
+  loading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -30,24 +33,22 @@ export class ProductFormComponent implements OnInit {
       description: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
       cost: [0, [Validators.required, Validators.min(0)]],
-      currency: ['PEN', Validators.required],
-      weightGrams: [0, [Validators.required, Validators.min(0)]],
+      weightGrams: [0, [Validators.required, Validators.min(1)]],
       isActive: [true]
     });
   }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-
     if (id) {
-      // Modo edición: cargar producto por ID
+      this.loading = true;
       this.productService.getProductById(+id).subscribe({
         next: (product) => {
           this.producto = product;
           this.productForm.patchValue(product);
+          this.loading = false;
         },
-        error: (err) => {
-          console.error('Error al cargar producto:', err);
+        error: () => {
           this.router.navigate(['/products']);
         }
       });
@@ -56,33 +57,34 @@ export class ProductFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.productForm.invalid) {
-      this.productForm.markAllAsTouched(); // Marca todos como tocados para mostrar errores
+      this.productForm.markAllAsTouched();
       return;
     }
 
+    this.loading = true;
     const formData = this.productForm.value;
 
     if (this.producto?.id) {
-      // Editar producto existente
       this.productService.updateProduct(this.producto.id, formData).subscribe({
         next: () => {
+          this.loading = false;
           alert('Producto actualizado con éxito');
           this.router.navigate(['/products']);
         },
-        error: (err) => {
-          console.error('Error al actualizar:', err);
+        error: () => {
+          this.loading = false;
           alert('Error al actualizar el producto');
         }
       });
     } else {
-      // Crear nuevo producto
       this.productService.createProduct(formData).subscribe({
         next: () => {
+          this.loading = false;
           alert('Producto creado con éxito');
           this.router.navigate(['/products']);
         },
-        error: (err) => {
-          console.error('Error al crear:', err);
+        error: () => {
+          this.loading = false;
           alert('Error al crear el producto');
         }
       });
@@ -91,5 +93,7 @@ export class ProductFormComponent implements OnInit {
 
   resetForm(): void {
     this.productForm.reset();
+    this.loading = false;
   }
+  
 }

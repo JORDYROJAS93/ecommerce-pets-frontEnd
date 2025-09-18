@@ -1,5 +1,7 @@
 <div class="container mt-4">
-  <button class="btn btn-secondary mb-3" (click)="goBack()">← Volver a productos</button>
+  <button class="btn btn-secondary mb-3" (click)="goBack()">
+    ← Volver a productos
+  </button>
 
   <div class="card">
     <div class="card-header">
@@ -7,21 +9,41 @@
       <p class="text-muted">{{ producto?.sku }}</p>
     </div>
     <div class="card-body">
-      <p><strong>Descripción corta:</strong> {{ producto?.shortDescription }}</p>
+      <p>
+        <strong>Descripción corta:</strong> {{ producto?.shortDescription }}
+      </p>
       <p><strong>Descripción:</strong> {{ producto?.description }}</p>
-      <p><strong>Precio:</strong> {{ producto?.price | currency:'PEN':'symbol' }}</p>
+      <p>
+        <strong>Precio:</strong>
+        {{ producto?.price | currency : "PEN" : "symbol" }}
+      </p>
       <p><strong>Peso:</strong> {{ producto?.weightGrams }} gr</p>
-      <p><strong>Estado:</strong> {{ producto?.isActive ? 'Activo' : 'Inactivo' }}</p>
+      <p>
+        <strong>Estado:</strong>
+        {{ producto?.isActive ? "Activo" : "Inactivo" }}
+      </p>
 
+      <!-- 👇 VALIDACIÓN SEGURA ANTES DE ITERAR -->
+      @if (dietaryTags.length > 0) {
       <div class="mt-3">
         <h5>Etiquetas dietéticas:</h5>
-        <div *ngFor="let tag of producto?.dietaryTags" class="badge bg-primary me-1">
-          {{ tag.name }}
-        </div>
+        @for (tag of dietaryTags; track tag.id) {
+        <span class="badge bg-primary me-1">{{ tag.name }}</span>
+        }
       </div>
+      } @else {
+      <div class="mt-3">
+        <h5>Etiquetas dietéticas:</h5>
+        <p class="text-muted">No tiene etiquetas asignadas.</p>
+      </div>
+      }
 
       <div class="mt-4">
-        <button class="btn btn-warning" (click)="editProduct()">Editar producto</button>
+        @if (authService.isAdmin()) {
+        <button class="btn btn-warning" (click)="editProduct()">
+          <i class="bi bi-pencil"></i> Editar producto
+        </button>
+        }
       </div>
     </div>
   </div>

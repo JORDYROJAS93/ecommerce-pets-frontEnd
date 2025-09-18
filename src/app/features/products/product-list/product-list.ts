@@ -1,3 +1,4 @@
+import { CartService } from './../../../core/services/cart.service';
 import { Component } from '@angular/core';
 import { ProductService  } from '../../../core/services/product.service';
 import { CommonModule, CurrencyPipe } from '@angular/common';
@@ -20,7 +21,8 @@ export class ProductListComponent {
 
   constructor(
     public authService: AuthService,
-    private productService: ProductService) {}
+    private productService: ProductService,
+    private cartService: CartService) {}
 
   ngOnInit(): void {
     this.productService.getProducts().subscribe({
@@ -34,4 +36,11 @@ export class ProductListComponent {
       }
     });
   }
+
+// MÉTODO: Agrega producto al carrito
+  addToCart(product: Product): void {
+    this.cartService.addToCart(product);
+    alert(`"${product.name}" agregado al carrito.`);
+  }
+
 }
