@@ -98,13 +98,13 @@ hasRole(role: string): boolean {
 isAdmin(): boolean {
   const decodedToken = this.getDecodedToken();
   if (!decodedToken || !Array.isArray(decodedToken.roles)) return false;
-  return decodedToken.roles.includes('ROLE_ROLE_ADMIN'); 
+  return decodedToken.roles.includes('ROLE_ADMIN'); 
 }
 
 isUser(): boolean {
   const decodedToken = this.getDecodedToken();
   if (!decodedToken || !Array.isArray(decodedToken.roles)) return false;
-  return decodedToken.roles.includes('ROLE_ROLE_USER'); // 👈 ¡IMPORTANTE!
+  return decodedToken.roles.includes('ROLE_CLIENTE'); // 👈 ¡IMPORTANTE!
 }
 
 }

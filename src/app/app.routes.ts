@@ -9,6 +9,8 @@ import { CheckoutComponent } from './features/checkout/checkout';
 import { ProfileComponent } from './features/profile/profile';
 import { AdminGuard } from './core/guards/admin.guard';
 import { ProductFormComponent } from './features/products/product-form/product-form';
+import { NosotrosComponent } from './features/nosotros/nosotros';
+import { ContactanosComponent } from './features/contactanos/contactanos';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -27,8 +29,7 @@ export const routes: Routes = [
     { path: 'cart', component: CartComponent, canActivate: [AdminGuard] },
     { path: 'checkout', component: CheckoutComponent, canActivate: [AdminGuard] },
     { path: 'profile', component: ProfileComponent, canActivate: [AdminGuard] },
-  //  { path: 'nosotros', loadComponent: () => import('./features/nosotros/nosotros').then(m => m.NosotrosComponent) },
-  //  { path: 'contacto', loadComponent: () => import('./features/contacto/contacto').then(m => m.ContactoComponent) }
-
-  { path: '**', redirectTo: '' }
+    { path: 'nosotros', component: NosotrosComponent},
+    { path: 'contacto', component: ContactanosComponent },
+    { path: '**', redirectTo: '' }
 ];

@@ -1,53 +1,110 @@
 <div class="container my-4">
   <h2 class="mb-4">Productos</h2>
 
-  <!-- Solo administradores ven el botón de crear -->
-  @if (authService.isAdmin()) {
-    <a routerLink="/products/new" class="btn btn-success mb-4">Nuevo Producto</a>
-  }
+  <!--buscar , filtros y ordenar-->
+  <div>
+    <div class="row mb-3">
+      <div class="col-md-4 mb-2">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Buscar productos..."
+          [ngModel]="searchText"
+          (input)="onSearchChange($event)"
+        />
+      </div>
 
-  @if (loading) {
-    <div class="text-center">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando...</span>
+      <div class="col-md-4 mb-2">
+        <select
+          class="form-select"
+          [ngModel]="selectedCategoriaId"
+          (change)="onFilterChange('categoria', $event)"
+        >
+          <option [value]="0">Todas las categorías</option>
+          @for (categoria of categorias; track categoria.id) {
+          <option [value]="categoria.id">{{ categoria.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="col-md-4 mb-2">
+        <select
+          class="form-select"
+          [ngModel]="selectedSort"
+          (change)="onFilterChange('sort', $event)"
+        >
+          <option value="">Ordenar por</option>
+          <option value="priceAsc">Precio: Menor a Mayor</option>
+          <option value="priceDesc">Precio: Mayor a Menor</option>
+          <option value="nameAsc">Nombre: A-Z</option>
+          <option value="nameDesc">Nombre: Z-A</option>
+        </select>
       </div>
     </div>
-  } @else if (products.length > 0) {
-    <div class="row">
-      @for (product of products; track product.id) {
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">{{ product.name }}</h5>
-              <p class="card-text text-muted">{{ product.shortDescription }}</p>
-              <p class="fw-bold">{{ product.price | currency:product.currency }}</p>
+  </div>
 
-              <!-- 👇 BOTÓN "VER DETALLES" → SIEMPRE visible -->
-              <a routerLink="/products/detail/{{product.id}}" class="btn btn-sm btn-info me-2">
-                <i class="bi bi-eye"></i> Ver
-              </a>
+  <!-- Solo administradores ven el botón de crear -->
+  @if (authService.isAdmin()) {
+  <a routerLink="/products/new" class="btn btn-success mb-4">Nuevo Producto</a>
+  }
+  <!-- filtros  -->
 
-              <!-- 👇 BOTÓN "AGREGAR AL CARRITO" → SOLO para CLIENTES -->
-              @if (authService.isUser()) {
-                <button class="btn btn-sm btn-primary me-2" (click)="addToCart(product)">
-                  <i class="bi bi-cart-plus"></i> Agregar al carrito
-                </button>
-              }
+  @if (loading) {
+  <div class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+  } @else if (productos.length > 0) {
+  <div class="row">
+    @for (product of productos; track product.id) {
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ product.nombre }}</h5>
+          <p class="card-text text-muted">{{ product.descripcionCorta }}</p>
+          <p class="fw-bold">{{ product.moneda }} {{ product.precio }}</p>
 
-              <!-- 👇 BOTÓN "EDITAR" → SOLO para ADMINISTRADORES -->
-              @if (authService.isAdmin()) {
-                <a routerLink="/products/edit/{{product.id}}" class="btn btn-sm btn-warning">
-                  <i class="bi bi-pencil"></i> Editar
-                </a>
-              }
-            </div>
-          </div>
+          <!-- 👇 BOTÓN "VER DETALLES" → SIEMPRE visible -->
+          <a
+            routerLink="/products/detail/{{ product.id }}"
+            class="btn btn-sm btn-info me-2"
+          >
+            <i class="bi bi-eye"></i> Ver
+          </a>
+
+          <!-- 👇 BOTÓN "AGREGAR AL CARRITO" → SOLO para CLIENTES -->
+          @if (authService.isUser()) {
+          <button
+            class="btn btn-sm btn-primary me-2"
+            (click)="addToCart(product)"
+          >
+            <i class="bi bi-cart-plus"></i> Agregar al carrito
+          </button>
+          }
+
+          <!-- 👇 BOTÓN "EDITAR y ELIMINAR" → SOLO para ADMINISTRADORES -->
+          @if (authService.isAdmin()) {
+          <a
+            routerLink="/products/edit/{{ product.id }}"
+            class="btn btn-sm btn-warning me-2"
+          >
+            <i class="bi bi-pencil"></i> Editar
+          </a>
+
+          <button
+            class="btn btn-sm btn-danger"
+            (click)="deleteProduct(product.id)"
+          >
+            <i class="bi bi-trash"></i> Eliminar
+          </button>
+          }
         </div>
-      }
+      </div>
     </div>
+    }
+  </div>
   } @else {
-    <div class="alert alert-info">
-      No hay productos disponibles.
-    </div>
+  <div class="alert alert-info">No hay productos disponibles.</div>
   }
 </div>

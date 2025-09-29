@@ -1,7 +1,8 @@
-import { CartService } from './../../core/services/cart.service';
+
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
+import { CarritoService } from '../../core/services/carrito.service';
 
 @Component({
   selector: 'app-header',
@@ -17,7 +18,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
-    public cartService: CartService) {}
+    public carritoService: CarritoService) {}
 
   ngOnInit(): void {
     // Suscribirse al estado de autenticación
