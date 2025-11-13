@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
@@ -59,6 +60,7 @@ export class ProductFormComponent implements OnInit {
       stock: [0, [Validators.required, Validators.min(0)]],
       pesoGramos: [0, [Validators.required, Validators.min(1)]],
       estaActivo: [true],
+      imagenes: this.fb.array([]),
     });
   }
 
@@ -70,6 +72,26 @@ export class ProductFormComponent implements OnInit {
       this.productoService.getProductById(+id).subscribe({
         next: (product) => {
           this.producto = product;
+          
+          //  Rellenar imágenes
+          this.imagenesFormArray.clear();
+          if (product.imagenes && product.imagenes.length > 0) {
+            product.imagenes.forEach((img) => {
+              this.imagenesFormArray.push(
+                this.fb.group({
+                  url: [
+                    img.url || '',
+                    [Validators.required, Validators.pattern(/^https?:\/\/.+/)],
+                  ],
+                  orden: [img.orden || this.imagenesFormArray.length + 1],
+                })
+              );
+            });
+          } else {
+            // Opcional: añadir un campo vacío al inicio
+            this.agregarImagen();
+          }
+
           this.productForm.patchValue({
             nombre: product.nombre,
             sku: product.sku,
@@ -144,7 +166,6 @@ export class ProductFormComponent implements OnInit {
       marca: { id: Number(formData.idMarca) },
       categoria: { id: Number(formData.idCategoria) },
       mascota: { id: Number(formData.idMascota) },
-      
     };
     console.log('🎯 Datos enviados al backend:', payload);
 
@@ -195,5 +216,25 @@ export class ProductFormComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/products']);
+  }
+
+  get imagenesFormArray(): FormArray {
+    return this.productForm.get('imagenes') as FormArray;
+  }
+
+  crearImagenFormGroup(url: string = ''): FormGroup {
+    return this.fb.group({
+      url: [url, [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
+      orden: [this.imagenesFormArray.length + 1],
+    });
+  }
+
+  agregarImagen(): void {
+    this.imagenesFormArray.push(this.crearImagenFormGroup());
+  }
+
+  eliminarImagen(index: number): void {
+    this.imagenesFormArray.removeAt(index);
+    // Opcional: reordenar los "orden" si lo usas en el backend
   }
 }

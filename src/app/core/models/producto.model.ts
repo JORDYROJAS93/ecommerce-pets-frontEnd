@@ -13,6 +13,8 @@ export interface Producto {
   estaActivo: boolean;
   creadoEn: string;
   actualizadoEn: string;
+  urlImagenPrincipal?: string | null; 
+
 
 // IDs para relaciones (solo números, no objetos completos)
   idMarca?: number;

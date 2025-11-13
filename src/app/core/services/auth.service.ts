@@ -2,22 +2,27 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
-export interface LoginResponse {
+interface LoginResponse {
   token: string;
+  userId?: number;
+  username?: string;
+  email?: string;
 }
 
 export interface DecodedToken {
-  sub: string;
-  roles: string[];
-  iat: number;
-  exp: number;
+  sub?: string;
+  id?: number;
+  userId?: number;
+  roles?: string[];
+  iat?: number;
+  exp?: number;
 }
 
 @Injectable({
@@ -26,6 +31,7 @@ export interface DecodedToken {
 export class AuthService {
   private apiUrl = 'http://localhost:8096/auth';
   private tokenKey = 'authToken';
+  private userIdKey = 'userId';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -34,7 +40,26 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
         tap(response => {
-          this.setToken(response.token);
+          // Guardar token siempre que venga
+          if (response.token) {
+            this.setToken(response.token);
+          }
+
+          // Si el backend retorna userId, lo guardamos; si no, intentamos extraerlo del token
+          if (response.userId) {
+            this.setUserId(response.userId);
+          } else {
+            const decoded: any = this.getDecodedToken();
+            const possibleId = decoded?.userId ?? decoded?.id ?? null;
+            if (possibleId && !isNaN(Number(possibleId))) {
+              this.setUserId(Number(possibleId));
+            } else {
+              // No forzar logout por falta de userId; permitir flujo de invitado si aplica
+              console.warn("AuthService: 'userId' no encontrado en respuesta ni en token. Continuando sin userId en localStorage.");
+              this.removeUserId();
+            }
+          }
+
           this.isAuthenticatedSubject.next(true);
         })
       );
@@ -42,6 +67,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+    this.removeUserId();
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/login']);
   }
@@ -65,7 +91,6 @@ export class AuthService {
   getDecodedToken(): DecodedToken | null {
     const token = this.getToken();
     if (!token) return null;
-    
     try {
       return jwtDecode<DecodedToken>(token);
     } catch (error) {
@@ -75,36 +100,49 @@ export class AuthService {
   }
 
   isTokenExpired(): boolean {
-    const decodedToken = this.getDecodedToken();
-    if (!decodedToken) return true;
+    const decoded = this.getDecodedToken();
+    if (!decoded || !decoded.exp) return true;
+    const now = Date.now() / 1000;
+    return decoded.exp < now;
+  }
 
-    const currentTime = Date.now() / 1000;
-    return decodedToken.exp < currentTime;
+  // Getter sincrónico útil en templates
+  isLoggedIn(): boolean {
+    return this.hasToken() && !this.isTokenExpired();
   }
 
   getUsername(): string | null {
-    const decodedToken = this.getDecodedToken();
-    return decodedToken ? decodedToken.sub : null;
+    const decoded = this.getDecodedToken();
+    // algunos tokens usan 'sub' como email/username
+    return (decoded?.sub as string) ?? null;
   }
 
-hasRole(role: string): boolean {
-  const decodedToken = this.getDecodedToken();
-  if (!decodedToken || !Array.isArray(decodedToken.roles)) {
-    return false;
+  getUserId(): number | null {
+    const v = localStorage.getItem(this.userIdKey);
+    if (!v) return null;
+    const n = Number(v);
+    return isNaN(n) ? null : n;
   }
-  return decodedToken.roles.includes(role);
-}
 
-isAdmin(): boolean {
-  const decodedToken = this.getDecodedToken();
-  if (!decodedToken || !Array.isArray(decodedToken.roles)) return false;
-  return decodedToken.roles.includes('ROLE_ADMIN'); 
-}
+  private setUserId(id: number): void {
+    localStorage.setItem(this.userIdKey, id.toString());
+  }
 
-isUser(): boolean {
-  const decodedToken = this.getDecodedToken();
-  if (!decodedToken || !Array.isArray(decodedToken.roles)) return false;
-  return decodedToken.roles.includes('ROLE_CLIENTE'); // 👈 ¡IMPORTANTE!
-}
+  private removeUserId(): void {
+    localStorage.removeItem(this.userIdKey);
+  }
 
+  hasRole(role: string): boolean {
+    const decoded = this.getDecodedToken();
+    if (!decoded || !Array.isArray(decoded.roles)) return false;
+    return decoded.roles.includes(role);
+  }
+
+  isAdmin(): boolean {
+    return this.hasRole('ROLE_ADMIN') || this.hasRole('ADMIN');
+  }
+
+  isUser(): boolean {
+    return this.hasRole('ROLE_CLIENTE') || this.hasRole('CLIENTE') || this.hasRole('ROLE_USER');
+  }
 }

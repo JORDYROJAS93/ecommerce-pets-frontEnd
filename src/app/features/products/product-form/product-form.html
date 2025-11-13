@@ -343,6 +343,58 @@
           }
         </div>
 
+        <!-- Imágenes del Producto -->
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <label class="form-label fw-semibold">Imágenes del Producto</label>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              (click)="agregarImagen()"
+            >
+              + Agregar imagen
+            </button>
+          </div>
+
+          <div formArrayName="imagenes">
+            @for (imagenControl of imagenesFormArray.controls; track $index; let
+            i = $index) {
+            <div class="input-group mb-2" [formGroupName]="i">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="url"
+                placeholder="https://ejemplo.com/imagen.jpg"
+                [class.is-invalid]="
+                  imagenControl.get('url')?.invalid &&
+                  imagenControl.get('url')?.touched
+                "
+              />
+              <button
+                class="btn btn-outline-danger"
+                type="button"
+                (click)="eliminarImagen(i)"
+                [disabled]="imagenesFormArray.length === 1"
+              >
+                🗑️
+              </button>
+            </div>
+            @if (imagenControl.get('url')?.invalid &&
+            imagenControl.get('url')?.touched) {
+            <div class="text-danger small ms-1">
+              @if (imagenControl.get('url')?.errors?.['required']) { URL
+              requerida. } @else if
+              (imagenControl.get('url')?.errors?.['pattern']) { Debe ser una URL
+              válida (comenzar con http:// o https://). }
+            </div>
+            } }
+          </div>
+          <small class="text-muted"
+            >Puedes agregar varias imágenes. Solo se aceptan URLs
+            válidas.</small
+          >
+        </div>
+
         <!-- Botones -->
         <div class="d-flex gap-3 pt-3 justify-content-end">
           <button

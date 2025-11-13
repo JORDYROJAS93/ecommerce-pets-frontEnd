@@ -13,7 +13,7 @@ export class JwtInterceptor implements HttpInterceptor {
     const token = this.authService.getToken();
 
     // Si hay token, lo agregamos al header Authorization
-    if (token) {
+    if (token && !this.authService.isTokenExpired()) {
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`

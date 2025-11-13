@@ -1,12 +1,11 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-4">
   <!-- 🔹 Logo -->
-  <a
-    class="navbar-brand d-flex align-items-center"
+  <a class="navbar-brand d-flex align-items-center"
     routerLink="/"
     routerLinkActive="active"
     [routerLinkActiveOptions]="{ exact: true }"
   >
-    <img src="assets/logo.png" alt="Ecommerce Logo" width="120" class="me-2" />
+    <img src="https://github.com/JORDYROJAS93/ecommerce-images/blob/main/logo2.png?raw=true" alt="Ecommerce Logo" width="120" class="me-2" />
   </a>
 
   <!-- 🔹 Botón colapsable en móvil -->
@@ -54,7 +53,7 @@
 
     <!-- 🔹 Botón login, carrito y estado de usuario -->
     <div class="d-flex align-items-center">
-      @if (authService.isAuthenticated()) { @if (authService.isAdmin()) {
+      @if (authService.isLoggedIn()) { @if (authService.isAdmin()) {
       <span class="me-3 text-muted"
         >Hola, {{ authService.getUsername() }} (ADMIN)</span
       >
@@ -76,7 +75,7 @@
         <span
           class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
         >
-          {{ carritoService.getTotalItems() }}
+          {{ (totalItems$ | async) || 0 }}
         </span>
       </a>
     </div>

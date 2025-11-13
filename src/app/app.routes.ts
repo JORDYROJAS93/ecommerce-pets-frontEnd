@@ -26,9 +26,9 @@ export const routes: Routes = [
 
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
-    { path: 'cart', component: CartComponent, canActivate: [AdminGuard] },
-    { path: 'checkout', component: CheckoutComponent, canActivate: [AdminGuard] },
-    { path: 'profile', component: ProfileComponent, canActivate: [AdminGuard] },
+    { path: 'cart', component: CartComponent },
+    { path: 'checkout', component: CheckoutComponent},
+    { path: 'profile', component: ProfileComponent },
     { path: 'nosotros', component: NosotrosComponent},
     { path: 'contacto', component: ContactanosComponent },
     { path: '**', redirectTo: '' }

@@ -1,1 +1,189 @@
-<p>checkout works!</p>
+<div class="container mt-4">
+  <h2>Finalizar Compra</h2>
+
+  @if (isLoading) {
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  } @else if (errorMessage) {
+    <div class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+    <button class="btn btn-primary" (click)="volverAlCarrito()">Volver al Carrito</button>
+  } @else if (!carrito || !carrito.items || carrito.items.length === 0) {
+    <div class="alert alert-info">
+      <h5><i class="bi bi-cart-x me-2"></i>No hay productos en el carrito.</h5>
+      <p>Por favor, agrega productos a tu carrito antes de finalizar la compra.</p>
+      <a routerLink="/products" class="btn btn-primary">Ver Productos</a>
+    </div>
+  } @else {
+    <form #checkoutForm="ngForm" (ngSubmit)="finalizarCompra()">
+      <div class="row">
+        <div class="col-md-8">
+          <!-- Selección de Dirección -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5>Dirección de Envío</h5>
+            </div>
+            <div class="card-body">
+              @if (direcciones.length > 0) {
+                <div class="mb-3">
+                  <label for="direccionSelect" class="form-label">Selecciona una dirección</label>
+                  <select class="form-select" id="direccionSelect" [(ngModel)]="direccionSeleccionada" name="direccionSeleccionada" required>
+                    @for (dir of direcciones; track dir.id) {
+                      <option [value]="dir">{{ dir.linea1 }}, {{ dir.distrito }}, {{ dir.departamento }}</option>
+                    }
+                  </select>
+                </div>
+              }
+
+              @if (mostrarFormularioDireccion) {
+                <div class="border p-3 rounded mb-3">
+                  <h6>Nueva Dirección</h6>
+                  <div class="mb-3">
+                    <label for="nombreCompleto" class="form-label">Nombre Completo</label>
+                    <input type="text" class="form-control" id="nombreCompleto" [(ngModel)]="nuevaDireccion.nombreCompleto" name="nombreCompleto" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="linea1" class="form-label">Dirección</label>
+                    <input type="text" class="form-control" id="linea1" [(ngModel)]="nuevaDireccion.linea1" name="linea1" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="distrito" class="form-label">Distrito</label>
+                    <input type="text" class="form-control" id="distrito" [(ngModel)]="nuevaDireccion.distrito" name="distrito">
+                  </div>
+                  <div class="mb-3">
+                    <label for="provincia" class="form-label">Provincia</label>
+                    <input type="text" class="form-control" id="provincia" [(ngModel)]="nuevaDireccion.provincia" name="provincia">
+                  </div>
+                  <div class="mb-3">
+                    <label for="departamento" class="form-label">Departamento</label>
+                    <input type="text" class="form-control" id="departamento" [(ngModel)]="nuevaDireccion.departamento" name="departamento">
+                  </div>
+                  <div class="mb-3">
+                    <label for="codigoPostal" class="form-label">Código Postal</label>
+                    <input type="text" class="form-control" id="codigoPostal" [(ngModel)]="nuevaDireccion.codigoPostal" name="codigoPostal">
+                  </div>
+                  <div class="mb-3">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="tel" class="form-control" id="telefono" [(ngModel)]="nuevaDireccion.telefono" name="telefono">
+                  </div>
+                  <div class="mb-3">
+                    <label for="referencia" class="form-label">Referencia</label>
+                    <textarea class="form-control" id="referencia" rows="2" [(ngModel)]="nuevaDireccion.referencia" name="referencia"></textarea>
+                  </div>
+                  <button type="button" class="btn btn-success btn-sm" (click)="crearNuevaDireccion()">Guardar Dirección</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm ms-2" (click)="mostrarFormularioDireccion=false">Cancelar</button>
+                </div>
+              }
+
+              <button type="button" class="btn btn-outline-primary btn-sm" (click)="mostrarFormularioDireccion=true">Agregar Nueva Dirección</button>
+
+              @if (!direccionSeleccionada && !mostrarFormularioDireccion) {
+                <div class="alert alert-warning mt-3">
+                  No has seleccionado una dirección de envío. Por favor, selecciona una de la lista o agrega una nueva.
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Método de Pago -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5>Método de Pago</h5>
+            </div>
+            <div class="card-body">
+              @for (metodo of metodosPago; track metodo.id) {
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="radio" name="metodoPago" [id]="metodo.id" [(ngModel)]="metodoSeleccionado" [value]="metodo.id" required>
+                  <label class="form-check-label" [for]="metodo.id">
+                    {{ metodo.nombre }}
+                  </label>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <!-- Resumen del pedido -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5>Resumen del Pedido</h5>
+            </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                @for (item of carrito.items; track item.id) {
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-0">{{ item.producto?.nombre || 'Producto' }}</h6>
+                      <small class="text-muted">{{ item.cantidad }} x S/. {{ item.precioUnitario }}</small>
+                    </div>
+                    <strong>S/. {{ item.precioTotal }}</strong>
+                  </li>
+                }
+              </ul>
+
+              <div class="mt-3 p-3 bg-light rounded">
+                <div class="d-flex justify-content-between">
+                  <strong>Subtotal:</strong>
+                  <span>S/. {{ getSubtotal() | number:'1.2-2' }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>Envío:</span>
+                  <span>S/. 0.00</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>Impuestos:</span>
+                  <span>S/. 0.00</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                  <strong>Total:</strong>
+                  <span>S/. {{ getTotal() | number:'1.2-2' }}</span>
+                </div>
+              </div>
+
+              @if (errorMessage) {
+                <div class="alert alert-danger mt-3">
+                  {{ errorMessage }}
+                </div>
+              }
+
+              <!-- Botón Pagar (visible para todos los métodos excepto efectivo) -->
+              @if (metodoSeleccionado !== 'efectivo') {
+                <button type="button" class="btn btn-success btn-lg w-100 mt-3" (click)="finalizarCompra()" [disabled]="isFinalizing">
+                  @if (isFinalizing) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  }
+                  Pagar
+                </button>
+              }
+
+              <!-- Botón Finalizar Compra (visible solo para efectivo) -->
+              @if (metodoSeleccionado === 'efectivo') {
+                <button type="button" class="btn btn-success btn-lg w-100 mt-3" (click)="finalizarCompra()" [disabled]="isFinalizing">
+                  @if (isFinalizing) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  }
+                  Finalizar Compra
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Modal de Pago -->
+    <app-payment-modal
+      [isVisible]="mostrarModalPago"
+      [metodoPagoSeleccionado]="metodoPagoModal"
+      [totalAmount]="totalModal"
+      (onClose)="onModalClose()"
+      (onPaymentSuccess)="onPaymentSuccess($event)">
+    </app-payment-modal>
+  }
+</div>

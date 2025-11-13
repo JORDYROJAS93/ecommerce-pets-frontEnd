@@ -60,6 +60,25 @@
     @for (product of productos; track product.id) {
     <div class="col-md-4 mb-4">
       <div class="card h-100 shadow-sm">
+
+        <!-- INICIO: IMPLEMENTACIÓN DE IMAGEN -->
+        @if (product.urlImagenPrincipal) {
+            <img 
+                [src]="product.urlImagenPrincipal" 
+                class="card-img-top object-cover" 
+                [alt]="product.nombre" 
+                style="height: 200px; object-fit: cover;"
+                onerror="this.onerror=null; this.src='https://placehold.co/400x200/cccccc/333333?text=Sin+Imagen';"
+            />
+        } @else {
+            <img 
+                src="https://placehold.co/400x200/cccccc/333333?text=Sin+Imagen" 
+                class="card-img-top object-cover" 
+                [alt]="product.nombre"
+                style="height: 200px; object-fit: cover;"
+            />
+        }
+        <!-- FIN: IMPLEMENTACIÓN DE IMAGEN -->
         <div class="card-body">
           <h5 class="card-title">{{ product.nombre }}</h5>
           <p class="card-text text-muted">{{ product.descripcionCorta }}</p>

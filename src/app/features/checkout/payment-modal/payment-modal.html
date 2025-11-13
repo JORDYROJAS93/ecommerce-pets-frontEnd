@@ -1,0 +1,69 @@
+<div class="modal fade" [class.show]="isVisible" [style.display]="isVisible ? 'block' : 'none'" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Proceso de Pago</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Método de Pago</label>
+          <p class="fw-bold">{{ metodoPagoSeleccionado }}</p>
+        </div>
+
+        @if (metodoPagoSeleccionado === 'yape') {
+          <div class="mb-3">
+            <label for="yapePhone" class="form-label">Número de Teléfono Yape</label>
+            <input type="tel" class="form-control" id="yapePhone" [(ngModel)]="yapePhone" placeholder="Ingresa tu número de teléfono">
+          </div>
+        }
+
+        @if (metodoPagoSeleccionado === 'plin') {
+          <div class="mb-3">
+            <label for="plinPhone" class="form-label">Número de Teléfono Plin</label>
+            <input type="tel" class="form-control" id="plinPhone" [(ngModel)]="plinPhone" placeholder="Ingresa tu número de teléfono">
+          </div>
+        }
+
+        @if (metodoPagoSeleccionado === 'tarjeta') {
+          <div class="mb-3">
+            <label for="cardNumber" class="form-label">Número de Tarjeta</label>
+            <input type="text" class="form-control" id="cardNumber" [(ngModel)]="cardNumber" placeholder="0000 0000 0000 0000">
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="cardExpiry" class="form-label">Expiración (MM/AA)</label>
+              <input type="text" class="form-control" id="cardExpiry" [(ngModel)]="cardExpiry" placeholder="MM/AA">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="cardCvc" class="form-label">CVC</label>
+              <input type="text" class="form-control" id="cardCvc" [(ngModel)]="cardCvc" placeholder="123">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="cardName" class="form-label">Nombre en la Tarjeta</label>
+            <input type="text" class="form-control" id="cardName" [(ngModel)]="cardName" placeholder="Nombre completo">
+          </div>
+        }
+
+        @if (metodoPagoSeleccionado === 'paypal') {
+          <div class="alert alert-info">
+            Serás redirigido a PayPal para completar tu pago.
+          </div>
+        }
+
+        <!-- Monto Total -->
+        <div class="alert alert-success">
+          <strong>Total a pagar: S/. {{ totalAmount | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button type="button" class="btn btn-success" (click)="confirmPayment()" [disabled]="!metodoPagoSeleccionado">Confirmar Pago</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay del modal -->
+<div class="modal-backdrop fade" [class.show]="isVisible" *ngIf="isVisible"></div>

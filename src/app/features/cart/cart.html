@@ -1,1 +1,133 @@
-<p>cart works!</p>
+<div class="container my-5">
+  <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">
+    <i class="bi bi-bag me-3"></i>Tu Carrito de Compras
+  </h2>
+
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-3 text-lg text-gray-600">Cargando carrito...</p>
+    </div>
+  } @else if (carrito && carrito.items && carrito.items.length > 0) {
+    <div class="row">
+
+      <!-- Columna de Resumen (ORDER 1 en móvil/tablet, ORDER 2 en escritorio) -->
+      <!-- Esta columna se mueve ABAJO en pantallas grandes, pero queda arriba en móviles. -->
+      <div class="col-lg-4 order-lg-2 mb-4">
+        <div class="card shadow-lg border-primary border-2">
+          <div class="card-header bg-primary text-white fw-bold text-lg">
+            Resumen del Pedido
+          </div>
+          <div class="card-body p-4">
+            
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-gray-700">Subtotal ({{ carrito.items.length }} productos):</span>
+              <span class="fw-bold">S/. {{ getSubtotal() | number:'1.2-2' }}</span>
+            </div>
+            
+            <div class="d-flex justify-content-between mb-4 text-sm text-muted border-bottom pb-3">
+              <span>Costo de Envío:</span>
+              <span>S/. 10.00 </span>
+            </div>
+            
+            <div class="d-flex justify-content-between text-2xl font-bold text-gray-900">
+              <strong>Total a Pagar:</strong>
+              <strong class="text-primary">S/. {{ getSubtotal() + 10 | number:'1.2-2' }}</strong>
+            </div>
+
+            <!-- Botón Finalizar Compra -->
+            <div class="mt-4">
+              <button class="btn btn-success btn-lg w-100 transition-transform duration-300 hover:scale-105" (click)="finalizarCompra()">
+                <i class="bi bi-credit-card me-2"></i> Proceder al Pago
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Columna Principal de Ítems (ORDER 2 en móvil/tablet, ORDER 1 en escritorio) -->
+      <!-- Esta columna se mueve ARRIBA en pantallas grandes para priorizar la vista de ítems. -->
+      <div class="col-lg-8 order-lg-1 mb-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-white border-bottom fw-bold text-lg text-gray-700">
+            Detalles del Pedido
+          </div>
+          <ul class="list-group list-group-flush">
+            @for (item of carrito.items; track item.id) {
+              <li class="list-group-item d-flex align-items-center py-4 px-4 hover:bg-gray-50 transition-colors duration-200">
+                
+                <!-- Columna: Imagen/Info de Producto -->
+                <div class="d-flex align-items-center flex-grow-1">
+                  <!-- Imagen (Placeholder) -->
+                  <div class="me-4 p-2 border rounded-lg bg-gray-100">
+                    <i class="bi bi-gift text-2xl text-primary"></i>
+                  </div>
+                  
+                  <!-- Nombre y Detalles -->
+                  <div class="flex-grow-1">
+                    <h5 class="mb-1 fw-bold text-gray-800">{{ item.producto?.nombre || 'Producto Desconocido' }}</h5>
+                    <p class="mb-0 text-sm text-muted">Precio unitario: S/. {{ item.precioUnitario | number:'1.2-2' }}</p>
+                  </div>
+                </div>
+                
+                <!-- Columna: Controles de Cantidad -->
+                <div class="d-flex align-items-center gap-2 mx-4">
+                  <button class="btn btn-sm btn-outline-secondary" [disabled]="item.cantidad <= 1" (click)="actualizarCantidad(item, item.cantidad - 1)">
+                    <i class="bi bi-dash"></i>
+                  </button>
+                  <input type="text" [value]="item.cantidad" class="form-control form-control-sm text-center w-16" readonly>
+                  <button class="btn btn-sm btn-outline-secondary" (click)="actualizarCantidad(item, item.cantidad + 1)">
+                    <i class="bi bi-plus"></i>
+                  </button>
+                </div>
+                
+                <!-- Columna: Precio Total Item & Eliminar (CORRECCIÓN APLICADA AQUÍ) -->
+                <div class="d-flex align-items-center gap-3">
+                  <strong class="text-lg text-success w-24 text-end">
+                    <!-- Se muestra S/. junto al monto en una sola línea -->
+                    S/. {{ item.precioTotal | number:'1.2-2' }}
+                  </strong>
+                  <button class="btn btn-sm btn-outline-danger" (click)="eliminarItem(item.id)" title="Eliminar ítem">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        </div>
+        
+        <!-- Botón para volver al catálogo -->
+        <div class="mt-4">
+          <a routerLink="/" class="btn btn-outline-primary fw-bold transition-colors duration-200">
+            <i class="bi bi-arrow-left me-2"></i> Seguir Explorando
+          </a>
+        </div>
+      </div>
+      
+    </div>
+  } @else {
+    <div class="alert alert-warning p-5 text-center shadow-md border-2 border-warning">
+      <h5 class="text-2xl mb-3"><i class="bi bi-cart-x me-2"></i>Tu carrito está completamente vacío.</h5>
+      <p class="text-lg mb-4">Parece que aún no has agregado ningún delicioso snack a la cesta.</p>
+      <a routerLink="/products" class="btn btn-warning btn-lg fw-bold">
+        <i class="bi bi-paw me-2"></i> Ver Snacks para Mascotas
+      </a>
+    </div>
+  }
+</div>
+
+<!-- Scripts necesarios para Bootstrap Icons -->
+<style>
+/* Estilos personalizados para inputs */
+.w-16 { width: 4rem; }
+.w-24 { width: 6rem; } /* Aumentamos el ancho para el precio total */
+.text-lg { font-size: 1.125rem; }
+.text-2xl { font-size: 1.5rem; }
+/* Estilo para que el input de cantidad se vea mejor */
+.form-control-sm.w-16 {
+    padding: 0.25rem 0.1rem;
+    height: calc(1.5em + 0.5rem + 2px);
+}
+</style>
