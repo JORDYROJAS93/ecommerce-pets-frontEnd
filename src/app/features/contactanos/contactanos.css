@@ -1,0 +1,64 @@
+/* --- ESTILOS GENERALES Y LAYOUT --- */
+.contact-main {
+    max-width: 1200px;
+}
+
+/* Colores de Marca */
+.text-primary {
+    color: #4CAF50 !important; /* Verde Saludable */
+}
+
+.btn-success {
+    background-color: #6a994e !important; /* Verde Natural de Booster Snack */
+    border-color: #6a994e !important;
+}
+
+.btn-success:hover {
+    background-color: #58813a !important;
+    border-color: #58813a !important;
+}
+
+/* --- TARJETAS DE SECCIÓN --- */
+.form-card, .info-card, .map-card {
+    border-radius: 10px;
+}
+
+/* --- ICONOS DE INFO --- */
+.info-icon {
+    font-size: 1.5rem;
+    color: #4CAF50; /* Verde de la marca */
+}
+
+/* --- FORMULARIO --- */
+.form-control:focus {
+    border-color: #81C784; /* Verde más claro al hacer focus */
+    box-shadow: 0 0 0 0.25rem rgba(106, 153, 78, 0.25);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* --- MAPA PLACEHOLDER --- */
+.map-placeholder {
+    height: 300px;
+    background-color: #f8f9fa;
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #dee2e6;
+}
+
+/* --- RESPONSIVENESS --- */
+@media (max-width: 992px) {
+    /* En tabletas y móviles, el diseño de doble columna pasa a ser una sola */
+    .col-lg-7, .col-lg-5 {
+        order: 1; /* El formulario va primero */
+    }
+    .info-card {
+        order: 2;
+    }
+}

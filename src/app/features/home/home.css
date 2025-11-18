@@ -1,0 +1,53 @@
+/* -------------------------------------- */
+/* 1. HERO SECTION & CONTRASTE            */
+/* -------------------------------------- */
+.hero-section {
+    /* Fondo con imagen de pets o naturaleza. Asegúrate de tener la imagen */
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                url('/assets/images/hero-pets-bg.jpg') no-repeat center center;
+    background-size: cover;
+    min-height: 450px;
+    display: flex; /* Para centrar contenido */
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-section h1 {
+    font-size: 3.8rem;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* Ajuste para móviles */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 350px;
+    }
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+}
+
+/* -------------------------------------- */
+/* 2. PRODUCT CARDS (SE ELIMINA DE HOME)  */
+/* -------------------------------------- */
+/* NOTA: Estos estilos se mantienen si deseas usar las tarjetas en la página de Productos, 
+   pero ya no aplican a la página de Home actual. */
+/* .product-card { ... } */
+/* .product-img { ... } */
+/* .product-tag { ... } */
+
+/* -------------------------------------- */
+/* 3. VALUE ICONS & TESTIMONIALS          */
+/* -------------------------------------- */
+.bi {
+    color: #4CAF50; /* Color primario para los iconos de valor */
+}
+
+.text-primary {
+    color: #2196F3 !important; /* Asegurar color para enlaces/precios */
+}
+
+.testimonial-card {
+    border-left: 5px solid #ffc107; /* Borde de color amarillo para destacar */
+    border-radius: 8px;
+}

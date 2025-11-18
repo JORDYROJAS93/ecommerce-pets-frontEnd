@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 export interface LoginRequest {
   email: string;
@@ -25,24 +25,53 @@ export interface DecodedToken {
   exp?: number;
 }
 
+// DTO para la respuesta de registro (del backend Spring: message, userId)
+interface SignupResponse {
+  message: string;
+  userId: string;
+}
+
+// DTO para la solicitud de registro (debe coincidir con el DTO de Spring)
+export interface SignupRequest {
+  nombre: string; // Coincide con el campo 'name' de tu formulario
+  email: string;
+  password: string;
+  apellido?: string;
+  telefono?: string;
+}
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8096/auth';
   private tokenKey = 'authToken';
   private userIdKey = 'userId';
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(
+    this.hasToken()
+  );
 
   constructor(private http: HttpClient, private router: Router) {}
 
+  // --- Método de REGISTRO (NUEVO) ---
+  register(signupData: SignupRequest): Observable<SignupResponse> {
+    const url = `${this.apiUrl}/signup`;
+    return this.http.post<SignupResponse>(url, signupData);
+  }
+  // -----------------------------------
+
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials)
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
-        tap(response => {
+        tap((response) => {
+          console.log('Respuesta del login:', response);
           // Guardar token siempre que venga
           if (response.token) {
             this.setToken(response.token);
+          }
+          if (response.username) {
+            localStorage.setItem('userName', response.username);
           }
 
           // Si el backend retorna userId, lo guardamos; si no, intentamos extraerlo del token
@@ -55,7 +84,9 @@ export class AuthService {
               this.setUserId(Number(possibleId));
             } else {
               // No forzar logout por falta de userId; permitir flujo de invitado si aplica
-              console.warn("AuthService: 'userId' no encontrado en respuesta ni en token. Continuando sin userId en localStorage.");
+              console.warn(
+                "AuthService: 'userId' no encontrado en respuesta ni en token. Continuando sin userId en localStorage."
+              );
               this.removeUserId();
             }
           }
@@ -116,6 +147,13 @@ export class AuthService {
     // algunos tokens usan 'sub' como email/username
     return (decoded?.sub as string) ?? null;
   }
+  getUserName(): string | null {
+    return localStorage.getItem('userName');
+  }
+
+  setUserName(name: string): void {
+  localStorage.setItem('userName', name);
+}
 
   getUserId(): number | null {
     const v = localStorage.getItem(this.userIdKey);
@@ -143,6 +181,10 @@ export class AuthService {
   }
 
   isUser(): boolean {
-    return this.hasRole('ROLE_CLIENTE') || this.hasRole('CLIENTE') || this.hasRole('ROLE_USER');
+    return (
+      this.hasRole('ROLE_CLIENTE') ||
+      this.hasRole('CLIENTE') ||
+      this.hasRole('ROLE_USER')
+    );
   }
 }

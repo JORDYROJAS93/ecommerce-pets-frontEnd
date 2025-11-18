@@ -53,20 +53,20 @@
 
     <!-- 🔹 Botón login, carrito y estado de usuario -->
     <div class="d-flex align-items-center">
-      @if (authService.isLoggedIn()) { @if (authService.isAdmin()) {
-      <span class="me-3 text-muted"
-        >Hola, {{ authService.getUsername() }} (ADMIN)</span
-      >
+      @if (authService.isLoggedIn()) {
+        @if (authService.isAdmin()) {
+          <span class="me-3 text-muted">Hola, {{ authService.getUserName() || authService.getUsername() }} (ADMIN)</span>
+        } @else {
+          <span class="me-3 text-muted">Hola, {{ authService.getUserName() || authService.getUsername() }}</span>
+        }
+        <a routerLink="/profile" class="btn btn-outline-secondary me-2">
+          <i class="bi bi-person me-1"></i> Perfil
+        </a>
+        <button class="btn btn-outline-danger" (click)="logout()">
+          <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión
+        </button>
       } @else {
-      <span class="me-3 text-muted">Hola, {{ authService.getUsername() }}</span>
-      }
-      <button class="btn btn-outline-secondary me-2" (click)="logout()">
-        <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión
-      </button>
-      } @else {
-      <a routerLink="/login" class="btn btn-outline-primary me-2"
-        >Iniciar Sesión</a
-      >
+        <a routerLink="/login" class="btn btn-outline-primary me-2">Iniciar Sesión</a>
       }
 
       <!-- Carrito -->

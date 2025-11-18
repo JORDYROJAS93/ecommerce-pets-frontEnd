@@ -1,1 +1,184 @@
-<p>profile works!</p>
+<div class="container my-5"> <div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7"> @if (successMessage) {
+        <div class="alert alert-success d-flex align-items-center" role="alert">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          <div>{{ successMessage }}</div>
+        </div>
+      }
+      @if (errorMessage) {
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          <div>{{ errorMessage }}</div>
+        </div>
+      }
+
+      <div class="card shadow-lg border-0 rounded-3 mb-4">
+        <div class="card-header bg-dark text-white border-bottom-0 rounded-top-3"> <h4 class="mb-0 fs-5"><i class="bi bi-person-circle me-2"></i> Información del Perfil</h4>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="nombre" class="form-label fw-bold">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control form-control-lg" id="nombre"
+                  formControlName="nombre"
+                  [class.is-invalid]="profileForm.get('nombre')?.invalid && profileForm.get('nombre')?.touched"
+                />
+                @if (profileForm.get('nombre')?.invalid && profileForm.get('nombre')?.touched) {
+                  <div class="invalid-feedback">El nombre es obligatorio.</div>
+                }
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="apellido" class="form-label fw-bold">Apellido</label>
+                <input
+                  type="text"
+                  class="form-control form-control-lg"
+                  id="apellido"
+                  formControlName="apellido"
+                  [class.is-invalid]="profileForm.get('apellido')?.invalid && profileForm.get('apellido')?.touched"
+                />
+                @if (profileForm.get('apellido')?.invalid && profileForm.get('apellido')?.touched) {
+                  <div class="invalid-feedback">El apellido es obligatorio.</div>
+                }
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label fw-bold">Email</label>
+              <input
+                type="email"
+                class="form-control form-control-lg bg-light" id="email"
+                formControlName="email"
+                readonly
+              />
+              <div class="form-text">El email no puede ser modificado.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="telefono" class="form-label fw-bold">Teléfono</label>
+              <input
+                type="text"
+                class="form-control form-control-lg"
+                id="telefono"
+                formControlName="telefono"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary btn-lg w-100" [disabled]="profileForm.invalid || loading"
+            >
+              <i class="bi bi-save me-2"></i> {{ loading ? 'Guardando...' : 'Actualizar Perfil' }}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="d-grid gap-2 mb-4"> <button
+          type="button"
+          class="btn btn-outline-dark btn-lg" (click)="togglePasswordForm()"
+        >
+          <i class="bi bi-key-fill me-2"></i> {{ showPasswordForm ? 'Ocultar Formulario de Contraseña' : 'Cambiar Contraseña' }}
+        </button>
+      </div>
+
+      @if (showPasswordForm) {
+        <div class="card shadow-lg border-0 rounded-3">
+          <div class="card-header bg-dark text-white border-bottom-0 rounded-top-3"> <h4 class="mb-0 fs-5"><i class="bi bi-shield-lock-fill me-2"></i> Cambiar Contraseña</h4>
+          </div>
+          <div class="card-body p-4">
+            <form [formGroup]="changePasswordForm" (ngSubmit)="onChangePasswordSubmit()">
+              <div class="mb-3 position-relative">
+                <label for="currentPassword" class="form-label fw-bold">Contraseña Actual</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                  <input
+                    type="password"
+                    class="form-control form-control-lg"
+                    id="currentPassword"
+                    formControlName="currentPassword"
+                    [type]="showCurrentPassword ? 'text' : 'password'"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    (click)="togglePasswordVisibility('current')"
+                    title="Mostrar/Ocultar Contraseña"
+                  >
+                    <i class="bi" [class.bi-eye]="!showCurrentPassword" [class.bi-eye-slash]="showCurrentPassword"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="mb-3 position-relative">
+                <label for="newPassword" class="form-label fw-bold">Nueva Contraseña</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-file-earmark-lock"></i></span>
+                  <input
+                    type="password"
+                    class="form-control form-control-lg"
+                    id="newPassword"
+                    formControlName="newPassword"
+                    [type]="showNewPassword ? 'text' : 'password'"
+                    [class.is-invalid]="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    (click)="togglePasswordVisibility('new')"
+                    title="Mostrar/Ocultar Contraseña"
+                  >
+                    <i class="bi" [class.bi-eye]="!showNewPassword" [class.bi-eye-slash]="showNewPassword"></i>
+                  </button>
+                </div>
+                @if (changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched) {
+                  <div class="invalid-feedback d-block">La contraseña debe tener al menos 6 caracteres.</div>
+                }
+              </div>
+
+              <div class="mb-4 position-relative">
+                <label for="confirmPassword" class="form-label fw-bold">Confirmar Nueva Contraseña</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-check-circle"></i></span>
+                  <input
+                    type="password"
+                    class="form-control form-control-lg"
+                    id="confirmPassword"
+                    formControlName="confirmPassword"
+                    [type]="showConfirmPassword ? 'text' : 'password'"
+                    [class.is-invalid]="changePasswordForm.hasError('mismatch') && changePasswordForm.get('confirmPassword')?.touched"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    (click)="togglePasswordVisibility('confirm')"
+                    title="Mostrar/Ocultar Contraseña"
+                  >
+                    <i class="bi" [class.bi-eye]="!showConfirmPassword" [class.bi-eye-slash]="showConfirmPassword"></i>
+                  </button>
+                </div>
+                @if (changePasswordForm.hasError('mismatch') && changePasswordForm.get('confirmPassword')?.touched) {
+                  <div class="invalid-feedback d-block">Las contraseñas no coinciden.</div>
+                }
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-danger btn-lg w-100" [disabled]="changePasswordForm.invalid || loading"
+              >
+                <i class="bi bi-key me-2"></i> {{ loading ? 'Guardando...' : 'Cambiar Contraseña' }}
+              </button>
+            </form>
+          </div>
+        </div>
+      }
+
+      <div class="mt-4 text-center">
+        <a routerLink="/dashboard" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i> Volver al Panel</a>
+      </div>
+    </div>
+  </div>
+</div>

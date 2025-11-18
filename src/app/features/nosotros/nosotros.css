@@ -1,0 +1,64 @@
+/* --- ESTILOS GENERALES Y COLORES --- */
+.nosotros-main {
+    max-width: 1200px;
+}
+
+.text-primary {
+    color: #4CAF50 !important; /* Verde Saludable */
+}
+
+.bg-warning {
+    background-color: #ffc107 !important;
+}
+
+.story-img {
+    max-height: 450px;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* --- MISIÓN / VALORES --- */
+.small-list li {
+    padding: 3px 0;
+}
+
+/* --- TARJETAS DE EQUIPO --- */
+.team-card {
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.team-avatar {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px 0 0 10px; /* Redondear solo la esquina de la imagen */
+    min-height: 150px;
+}
+
+/* --- RESPONSIVENESS (Móviles) --- */
+@media (max-width: 768px) {
+    .story-section .col-lg-6 {
+        order: 2; /* En móviles, la imagen va después del texto para mejorar la lectura */
+    }
+
+    .story-section .col-lg-6:first-child {
+        order: 1; 
+    }
+
+    .team-avatar {
+        /* En móviles, la imagen del equipo se redondea completamente */
+        border-radius: 10px 10px 0 0;
+        height: 200px;
+    }
+
+    .team-card .row.g-0 {
+        /* Asegurar que la imagen del equipo ocupe todo el ancho en móviles */
+        display: block; 
+    }
+}

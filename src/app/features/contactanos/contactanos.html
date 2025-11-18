@@ -1,1 +1,152 @@
-<p>contactanos works!</p>
+<main class="contact-main container my-5">
+  
+  <header class="text-center mb-5">
+    <h1 class="display-4 fw-bold text-primary">Contáctanos</h1>
+    <p class="lead text-muted">Estamos listos para resolver tus dudas sobre nutrición y pedidos. Envíanos un mensaje o encuéntranos.</p>
+  </header>
+
+  <div class="row g-5">
+    
+    <!-- COLUMNA IZQUIERDA: FORMULARIO DE CONTACTO -->
+    <div class="col-lg-7">
+      <div class="card p-4 shadow-lg border-0 form-card">
+        <h3 class="card-title fw-semibold mb-4">Envíanos un Mensaje Directo</h3>
+        
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+
+          <!-- CAMPO: Nombre -->
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
+            <input type="text" id="name" formControlName="name" class="form-control" placeholder="Ej: Jordy Rojas">
+            <!-- Mensaje de error - USANDO @if -->
+            @if (formControls['name'].invalid && (formControls['name'].dirty || formControls['name'].touched)) {
+              <div class="text-danger mt-1 small">
+                @if (formControls['name'].errors?.['required']) {
+                  <span>El nombre es obligatorio.</span>
+                }
+                @if (formControls['name'].errors?.['minlength']) {
+                  <span>Mínimo 3 caracteres.</span>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- CAMPO: Email -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+            <input type="email" id="email" formControlName="email" class="form-control" placeholder="Ej: tu.correo@ejemplo.com">
+            <!-- Mensaje de error - USANDO @if -->
+            @if (formControls['email'].invalid && (formControls['email'].dirty || formControls['email'].touched)) {
+              <div class="text-danger mt-1 small">
+                @if (formControls['email'].errors?.['required']) {
+                  <span>El email es obligatorio.</span>
+                }
+                @if (formControls['email'].errors?.['email']) {
+                  <span>Debe ser un email válido.</span>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- CAMPO: Asunto -->
+          <div class="mb-3">
+            <label for="subject" class="form-label">Asunto <span class="text-danger">*</span></label>
+            <input type="text" id="subject" formControlName="subject" class="form-control" placeholder="Ej: Consulta sobre pedido #123">
+            <!-- Mensaje de error - USANDO @if -->
+            @if (formControls['subject'].invalid && (formControls['subject'].dirty || formControls['subject'].touched)) {
+              <div class="text-danger mt-1 small">
+                @if (formControls['subject'].errors?.['required']) {
+                  <span>El asunto es obligatorio.</span>
+                }
+                @if (formControls['subject'].errors?.['minlength']) {
+                  <span>Mínimo 5 caracteres.</span>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- CAMPO: Mensaje -->
+          <div class="mb-4">
+            <label for="message" class="form-label">Mensaje <span class="text-danger">*</span></label>
+            <textarea id="message" formControlName="message" class="form-control" rows="4" placeholder="Escribe tu consulta aquí (Mínimo 20 caracteres)"></textarea>
+            <!-- Mensaje de error - USANDO @if -->
+            @if (formControls['message'].invalid && (formControls['message'].dirty || formControls['message'].touched)) {
+              <div class="text-danger mt-1 small">
+                @if (formControls['message'].errors?.['required']) {
+                  <span>El mensaje es obligatorio.</span>
+                }
+                @if (formControls['message'].errors?.['minlength']) {
+                  <span>Mínimo 20 caracteres.</span>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- BOTÓN DE ENVÍO -->
+          <button type="submit" [disabled]="contactForm.invalid" class="btn btn-success btn-lg w-100 fw-bold submit-btn">
+            Enviar Mensaje
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: INFORMACIÓN DE CONTACTO Y MAPA -->
+    <div class="col-lg-5">
+      
+      <!-- Bloque de Información de Contacto -->
+      <div class="card p-4 shadow-sm border-0 info-card mb-4">
+        <h4 class="fw-semibold mb-3 text-secondary">Nuestra Información</h4>
+        
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-envelope-fill info-icon me-3 text-primary"></i>
+          <div>
+            <p class="mb-0 fw-bold">Email de Soporte</p>
+            <a [href]="'mailto:' + contactInfo.email" class="text-decoration-none text-dark">{{ contactInfo.email }}</a>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-telephone-fill info-icon me-3 text-primary"></i>
+          <div>
+            <p class="mb-0 fw-bold">Teléfono de Pedidos</p>
+            <a [href]="'tel:' + contactInfo.phone" class="text-decoration-none text-dark">{{ contactInfo.phone }}</a>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-clock-fill info-icon me-3 text-primary"></i>
+          <div>
+            <p class="mb-0 fw-bold">Horario de Atención</p>
+            <span class="text-muted">{{ contactInfo.schedule }}</span>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-start mb-3">
+          <i class="bi bi-geo-alt-fill info-icon me-3 mt-1 text-primary"></i>
+          <div>
+            <p class="mb-0 fw-bold">Dirección Principal</p>
+            <span class="text-muted">{{ contactInfo.address }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Bloque del MAPA REAL (CON COORDENADAS DE LIMA, PERÚ) -->
+      <div class="card p-0 shadow-sm border-0 map-card">
+        <h4 class="p-3 mb-0 bg-light fw-semibold text-center">Ubicación de la Tienda (Lima, Perú)</h4>
+        <div class="map-container">
+            <!-- IFRAME CON COORDENADAS: 11°55'59.2"S 77°05'03.5"W -->
+            <iframe 
+                src="https://maps.google.com/maps?q=11%C2%B055'59.2%22S%2077%C2%B005'03.5%22W&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                width="100%" 
+                height="450" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade"
+                class="responsive-map-iframe">
+            </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

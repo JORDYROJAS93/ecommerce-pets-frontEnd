@@ -1,1 +1,84 @@
-<p>nosotros works!</p>
+<main class="nosotros-main container my-5">
+  
+  <header class="text-center mb-5 py-3">
+    <h1 class="display-4 fw-bold text-primary">Nuestra Historia</h1>
+    <p class="lead text-muted">Impulsados por la salud, el amor por las mascotas y la pureza de la naturaleza.</p>
+  </header>
+
+  <!-- 1. SECCIÓN: LA HISTORIA Y EL ORIGEN (Imagen a la izquierda) -->
+  <section class="story-section row align-items-center mb-5 pb-5 g-5">
+    <div class="col-lg-6">
+      <!-- Placeholder de Imagen -->
+      <img src="assets/images/story-origin.jpg" alt="Historia de Booster Snack" class="img-fluid rounded-3 shadow-lg story-img">
+    </div>
+    <div class="col-lg-6">
+      <span class="badge bg-warning mb-2 fw-semibold">NUESTROS INICIOS</span>
+      <h2 class="fw-bold mb-3">De la Cocina de Casa al Corazón de tu Mascota</h2>
+      <p class="text-muted fs-5">Booster Snack nació de una frustración: la dificultad de encontrar premios 100% naturales, sin rellenos y con un beneficio real para la salud. Nuestro fundador, un apasionado por la nutrición animal, comenzó a formular snacks en su propia cocina, utilizando solo ingredientes orgánicos de origen peruano.</p>
+      <p class="text-muted">Hoy, mantenemos esa misma filosofía artesanal y la promesa de cero aditivos artificiales. Creemos que la mejor recompensa para un perro o gato es la salud a través de lo que la naturaleza nos ofrece.</p>
+      <a routerLink="/productos" class="btn btn-outline-primary mt-3">Ver Nuestros Productos Puros</a>
+    </div>
+  </section>
+
+  <hr class="my-5">
+  
+  <!-- 2. SECCIÓN: MISIÓN, VISIÓN Y VALORES -->
+  <section class="mission-section py-5 text-center bg-light rounded-3 mb-5">
+    <div class="container">
+      <h2 class="fw-bold mb-5 display-6">Misión, Visión y Valores</h2>
+      <div class="row g-4">
+        <!-- MISIÓN -->
+        <div class="col-md-4">
+          <i class="bi bi-rocket-takeoff-fill fs-1 text-danger mb-3"></i>
+          <h4 class="fw-bold">Nuestra Misión</h4>
+          <p class="text-muted">Proveer snacks naturales que sean funcionales y deliciosos, promoviendo dietas más limpias y la longevidad de las mascotas.</p>
+        </div>
+        <!-- VISIÓN -->
+        <div class="col-md-4">
+          <i class="bi bi-eye-fill fs-1 text-info mb-3"></i>
+          <h4 class="fw-bold">Nuestra Visión</h4>
+          <p class="text-muted">{{ companyVision }}</p>
+        </div>
+        <!-- VALORES -->
+        <div class="col-md-4">
+          <i class="bi bi-hand-thumbs-up-fill fs-1 text-success mb-3"></i>
+          <h4 class="fw-bold">Valores Clave</h4>
+          <ul class="list-unstyled text-muted text-center small-list">
+            <li>Transparencia en Ingredientes</li>
+            <li>Compromiso con la Salud Animal</li>
+            <li>Sostenibilidad Ambiental</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <hr class="my-5">
+
+  <!-- 3. SECCIÓN: CONOCE AL EQUIPO (Alternando la columna) -->
+  <section class="team-section pb-5" aria-label="Nuestro equipo de expertos">
+    <h2 class="text-center fw-bold mb-5 display-6">Conoce a Nuestros Expertos</h2>
+    
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      <!-- Iteración sobre los miembros del equipo -->
+      <div *ngFor="let member of teamMembers" class="col">
+        <div class="card h-100 shadow-sm border-0 team-card">
+          <div class="row g-0 align-items-center">
+            <div class="col-md-4">
+              <!-- Placeholder de Avatar -->
+              <img src="assets/images/{{ member.image }}" class="img-fluid rounded-start team-avatar" alt="Foto de {{ member.name }}">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title fw-bold mb-0">{{ member.name }}</h5>
+                <p class="text-primary small mb-2">{{ member.title }}</p>
+                <p class="card-text text-muted small">{{ member.specialty }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
